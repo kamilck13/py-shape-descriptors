@@ -26,7 +26,7 @@ def circularity(image, method='Ch', approx_contour=True):
     elif method == 'Cst':
         area = m.m00(image)
 
-        _, contours, _ = cv2.findContours(image, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(image, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) != 1:
             warn("More than one blob?")
         cnt = contours[0]

@@ -4,6 +4,8 @@ import shutil
 import tempfile
 import urllib.request
 import zipfile
+import cv2
+from shutil import copyfile
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,20 +14,7 @@ from PIL import Image
 _temp_path = tempfile.gettempdir() + os.sep + 'descriptors' + os.sep + 'databases' + os.sep
 
 
-def _fetch_zipfile_from_url(url, file_name):
-    if not os.path.exists(_temp_path):
-        os.makedirs(_temp_path)
-
-    if not os.path.exists(_temp_path + file_name + '.zip'):
-        with urllib.request.urlopen(url) as response, open(_temp_path + file_name + '.zip', 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
-
-    if not os.path.exists(_temp_path + file_name):
-        with zipfile.ZipFile(_temp_path + file_name + '.zip') as zf:
-            zf.extractall(_temp_path + file_name)
-
-
-def _load_dataset(*, url, dataset_name, ext, kind='all', black=0, white=1, size='all'):
+def _load_dataset(*, file_path, dataset_name, ext, kind='', black=0, white=1, size=0):
     """
 
     :param dataset_name:
@@ -37,7 +26,14 @@ def _load_dataset(*, url, dataset_name, ext, kind='all', black=0, white=1, size=
     """
     ret = {}
 
-    _fetch_zipfile_from_url(url, dataset_name)
+    if not os.path.exists(_temp_path):
+        os.makedirs(_temp_path)
+
+    copyfile(file_path + dataset_name + '.zip', _temp_path + dataset_name + '.zip')
+
+    if not os.path.exists(_temp_path + dataset_name):
+        with zipfile.ZipFile(_temp_path + dataset_name + '.zip') as zf:
+                zf.extractall(_temp_path + dataset_name)
 
     for file in glob.glob(_temp_path + dataset_name + os.sep + kind + ext):
         img = Image.open(file)
@@ -61,10 +57,10 @@ def _load_dataset(*, url, dataset_name, ext, kind='all', black=0, white=1, size=
 
     return ret
 
-
 if __name__ == "__main__":
-    images = _load_dataset('regular_polygons', kind='r03', size=1)
-    # images = _load_dataset('MPEG7dataset', kind='apple', size=1)
+    images = _load_dataset(file_path='C:\pyshape\\', dataset_name='regular_polygons', ext="*.png")
+    #images = _load_dataset(file_path='C:\pyshape\\', dataset_name='MPEG7dataset',  ext="*.gif", kind='apple', size=1)
+
     print(images)
     for v in images.values():
         print(np.unique(v))
