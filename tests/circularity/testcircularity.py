@@ -26,7 +26,7 @@ class TestCircularity(TestCase):
             self.assertAlmostEqual(circularity(v), vals[k[:-4]], 4)
 
 
-    def test_Cst(self):
+    def test_C_st(self):
         images = _load_dataset(file_path='C:\pyshape\\', dataset_name='regular_polygons', ext="*.png")
 
         vals = {
@@ -44,3 +44,23 @@ class TestCircularity(TestCase):
         for k, v in images.items():
             print("{0} {1:.4f} {2:.4f}".format(k, circularity(v, 'Cst'), vals[k[:-4]]))
             self.assertAlmostEqual(circularity(v, 'Cst'), vals[k[:-4]], 4)
+
+
+    def test_I_da(self):
+        images = _load_dataset(file_path='C:\pyshape\\', dataset_name='regular_polygons', ext="*.png")
+
+        vals = {
+            'r03': 0.0447,
+            'r04': 0.0910,
+            'r05': 0.1513,
+            'r06': 0.2255,
+            'r07': 0.3128,
+            'r08': 0.4131,
+            'r09': 0.5240,
+            'r10': 0.6336,
+            'r11': 0.7788,
+            'r12': 0.9247
+        }
+        for k, v in images.items():
+            print("{0} {1:.4f} {2:.4f}".format(k, circularity(v, 'Ida'), vals[k[:-4]]))
+            self.assertAlmostEqual(circularity(v, 'Ida'), vals[k[:-4]], 4)

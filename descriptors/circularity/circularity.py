@@ -1,3 +1,6 @@
+import math
+import statistics
+
 import cv2
 from math import pi
 from warnings import warn
@@ -10,6 +13,7 @@ def circularity(image, method='Ch', approx_contour=True):
     Function defines two methods of computing circularity.
     C_H: uses Hu moments
     C_st: compares area to perimeter
+    I_da:  Inner Distance Approach
     :param image:  np.ndarray, binary mask
     :param method: method
     :param approx_contour: approximate contour to give smoother lines, reduce noise and
@@ -36,5 +40,30 @@ def circularity(image, method='Ch', approx_contour=True):
         perimeter = cv2.arcLength(cnt, closed=True)
 
         return 4 * pi * area / perimeter ** 2
+    elif method == 'Ida':
+        # calculate moments of binary image
+        M = cv2.moments(image)
+
+        # calculate x,y coordinate of center
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+
+        contours, _ = cv2.findContours(image, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_NONE)
+
+        if len(contours) != 1:
+            warn("More than one blob?")
+        cnt = contours[0]
+
+        distances = []
+        for contour in contours:
+            for c in contour:
+                x, y, _, _ = cv2.boundingRect(c)
+                distances.append(math.sqrt((x - cX) ** 2 + (y - cY) ** 2))
+
+        mean = statistics.mean(distances)
+        deviation = statistics.pstdev(distances)
+
+        return round(mean/deviation/100, 4)
+
     else:
         warn("Unknown method.")
