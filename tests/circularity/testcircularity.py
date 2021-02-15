@@ -64,3 +64,23 @@ class TestCircularity(TestCase):
         for k, v in images.items():
             print("{0} {1:.4f} {2:.4f}".format(k, circularity(v, 'Ida'), vals[k[:-4]]))
             self.assertAlmostEqual(circularity(v, 'Ida'), vals[k[:-4]], 4)
+
+
+    def test_R_sa(self):
+        images = _load_dataset(file_path='C:\pyshape\\', dataset_name='regular_polygons', ext="*.png")
+
+        vals = {
+            'r03': 0.7789,
+            'r04': 0.7895,
+            'r05': 0.9739,
+            'r06': 0.9726,
+            'r07': 0.9852,
+            'r08': 0.9060,
+            'r09': 0.9926,
+            'r10': 0.9922,
+            'r11': 0.9928,
+            'r12': 0.9802
+        }
+        for k, v in images.items():
+            print("{0} {1:.4f} {2:.4f}".format(k, circularity(v, 'Rsa'), vals[k[:-4]]))
+            self.assertAlmostEqual(circularity(v, 'Rsa'), vals[k[:-4]], 4)
